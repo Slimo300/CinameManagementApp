@@ -1,6 +1,7 @@
 import React, {useState} from "react";
-import axios from "axios";
+
 import { Navigate } from "react-router-dom";
+import axiosObject, { BASE_URL } from "../Requests";
 
 const Register = () => {
 
@@ -16,7 +17,7 @@ const Register = () => {
         e.preventDefault();
 
         try {
-            await axios.post("http://www.spellcinema.com/api/users/register", {
+            await axiosObject.post(BASE_URL+"/users/register", {
                 email, password, passwordConfirmation
             });
             setNavigate(true);

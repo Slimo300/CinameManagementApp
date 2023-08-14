@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import axios from "axios";
+import axiosObject, { BASE_URL } from "../Requests";
 
 const Login = ({ setUser }) => {
 
@@ -10,9 +10,11 @@ const Login = ({ setUser }) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post("http://www.spellcinema.com/api/users/login", {
+            const response = await axiosObject.post(BASE_URL+"/users/login", {
                 email: email,
                 password: password
+            }, {
+                withCredentials: true,
             })
             setUser(response.data);
         } catch (err) {
@@ -26,11 +28,11 @@ const Login = ({ setUser }) => {
             <h1 className="pt-4 text-center">Login</h1>
             <form className="pt-2 d-flex row align-items-center" onSubmit={SubmitLogin}>
                 <div className="mb-3">
-                    <label for="exampleInputEmail1" className="form-label">Email address</label>
+                    <label className="form-label">Email address</label>
                     <input type="email" className="form-control" onChange={e => setEmail(e.target.value)} />
                 </div>
                 <div className="mb-3">
-                    <label for="exampleInputPassword1" className="form-label">Password</label>
+                    <label className="form-label">Password</label>
                     <input type="password" className="form-control" onChange={e => setPassword(e.target.value)}/>
                 </div>
                 <button type="submit" className="btn violet btn-primary pt-2">Submit</button>

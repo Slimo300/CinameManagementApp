@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import axios from "axios";
 
 import Nav from "./components/Nav";
 import Index from "./pages/Index";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import axiosObject, { BASE_URL } from "./Requests";
 
 function App() {
 
@@ -14,7 +14,7 @@ function App() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const response = await axios.get("http://www.spellcinema.com/api/users/current-user")
+        const response = await axiosObject.get(BASE_URL+"/users/current-user")
         setUser(response.data);
       } catch (err) {
         console.log("User not authorized: ", err.response)
@@ -23,6 +23,10 @@ function App() {
 
     getUser();
   }, []);
+
+  useEffect(() => {
+    if (user) console.log(user);
+  }, [user]);
 
   return (
     <div>

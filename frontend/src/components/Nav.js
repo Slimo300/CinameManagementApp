@@ -1,14 +1,16 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import axios from "axios";
 
 import logo from "../images/logo.png";
+import axiosObject, { BASE_URL } from "../Requests";
 
 const Nav = ({ user, setUser }) => {
 
     const Logout = async () => {
         try {
-            await axios.post("http://www.spellcinema.com/api/users/logout");
+            await axiosObject.post(BASE_URL+"/users/logout", {}, {
+                withCredentials: true,
+            });
             setUser(null);
         } catch(err) {
             alert(err);
@@ -27,13 +29,13 @@ const Nav = ({ user, setUser }) => {
                 <div className="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul className="navbar-nav me-auto">
                         <li className="nav-item">
-                            <a className="nav-link" href="/">Home</a>
+                            <NavLink className="nav-link" to="/">Home</NavLink>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/repertoire">Repertoire</a>
+                            <NavLink className="nav-link" to="/repertoire">Repertoire</NavLink>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/pricing">Pricing</a>
+                            <NavLink className="nav-link" to="/pricing">Pricing</NavLink>
                         </li>
                     </ul>
                     {!user?<NavLink className="nav-item nav-link px-2" to="/login">Login</NavLink>:null}
