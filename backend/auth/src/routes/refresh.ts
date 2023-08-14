@@ -1,9 +1,10 @@
-import express, {Request, Response} from "express";
+import express, {Request, Response} from "express"
 import jwt from "jsonwebtoken";
+// import { Token } from "../models/Token";
 
 const router = express.Router();
 
-router.get("/api/users/current-user", (req: Request, res: Response) => {
+router.post("/api/users/refresh", (req: Request, res: Response) => {
     if (!req.cookies?.jwt) {
         res.status(401).send({"err": "user not authorized, no token"});
         return;
@@ -11,11 +12,13 @@ router.get("/api/users/current-user", (req: Request, res: Response) => {
 
     try {
         const payload = jwt.verify(req.cookies.jwt, process.env.JWT_KEY!);
-        res.send(payload);
+        console.log(payload);
+
+        res.send({"msg": "ok"});
     } catch(err) {
         res.status(401).send({"err": "user not authorized"});
     }
 
 });
 
-export {router as currentUserRouter};
+export { router as refreshRouter };

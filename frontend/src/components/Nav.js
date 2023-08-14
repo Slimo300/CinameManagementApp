@@ -11,6 +11,7 @@ const Nav = ({ user, setUser }) => {
             await axiosObject.post(BASE_URL+"/users/logout", {}, {
                 withCredentials: true,
             });
+            window.localStorage.clear();
             setUser(null);
         } catch(err) {
             alert(err);

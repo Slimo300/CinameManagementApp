@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 import { User } from "../models/User";
 import { Password } from "../helpers/password";
+import { Token } from "../models/Token";
 
 const router = express.Router();
 
@@ -32,17 +33,32 @@ router.post("/api/users/login", [
         return;
     }
 
-    const userJwt = jwt.sign({
+    const accessToken = jwt.sign({
         id: user.id,
         email: user.email,
         isAdmin: user.isAdmin,
-    }, process.env.JWT_KEY!)
+    }, process.env.JWT_KEY!, {
+        expiresIn: 1000 * 60 * 20,
+    });
 
-    req.session = {
-        jwt: userJwt,
-    }
+    const token = Token.build({
+        userID: user.id,
+    });
+    await token.save();
 
-    res.send({msg: "ok"});
+    const refreshToken = jwt.sign({
+        id: token.id,
+        userId: token.userID,
+    }, process.env.JWT_KEY!, {
+        expiresIn: "1d",
+    })
+
+    res.cookie("jwt", refreshToken, {
+        httpOnly: true,
+        domain: process.env.DOMAIN
+    });
+
+    res.send({ accessToken });
 
 });
 

@@ -16,6 +16,8 @@ const Login = ({ setUser }) => {
             }, {
                 withCredentials: true,
             })
+            window.localStorage.setItem("token", response.data.accessToken);
+            console.log("safaf");
             setUser(response.data);
         } catch (err) {
             console.log(err);

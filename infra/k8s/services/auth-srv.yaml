@@ -12,6 +12,10 @@ spec:
       labels:
         app: auth
     spec:
+      initContainers:
+        - name: db-test
+          image: busybox:1.31
+          command: ['sh', '-c', 'echo -e "Checking for the availability of MySQL Server deployment"; while ! nc -z auth-mongo-srv 27017; do sleep 1; printf "-"; done; echo -e "  >> MongoDB Server has started";']
       containers:
         - name: auth
           image: slimo300/auth
@@ -23,6 +27,8 @@ spec:
                   key: JWT_KEY
             - name: MONGO_URI
               value: "mongodb://auth-mongo-srv:27017/auth"
+            - name: DOMAIN
+              value: spellcinema.com
 ---
 apiVersion: v1
 kind: Service
