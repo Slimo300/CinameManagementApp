@@ -14,8 +14,8 @@ const start = async () => {
     if (!process.env.DOMAIN) {
         throw new Error("DOMAIN not defined");
     }
-    if (!process.env.JWT_KEY) {
-        throw new Error("JWT_KEY not defined");
+    if (!process.env.REFRESH_SECRET) {
+        throw new Error("REFRESH_SECRET not defined");
     }
     if (!process.env.REFRESH_DURATION) {
         throw new Error("REFRESH_DURATION not defined");

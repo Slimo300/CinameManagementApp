@@ -1,12 +1,8 @@
 import express, {Request, Response} from "express";
 import { body, validationResult } from "express-validator";
-import jwt from "jsonwebtoken";
-import {v4 as uuidv4} from "uuid";
 
-import { redisClient } from "../app";
 import { User } from "../models/User";
 import { Password } from "../services/password";
-import { TokenState } from "../models/Token";
 import { Token } from "../services/token";
 
 const router = express.Router();

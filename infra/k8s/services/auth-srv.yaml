@@ -23,11 +23,6 @@ spec:
         - name: auth
           image: slimo300/auth
           env: 
-            - name: JWT_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: jwt-secret
-                  key: JWT_KEY
             - name: REDIS_URI
               value: "redis://auth-redis-srv:6379"
             - name: MONGO_URI
@@ -38,6 +33,21 @@ spec:
               value: "86400"
             - name: ACCESS_DURATION
               value: "1200"
+          envFrom:
+          - secretRef:
+              name: refresh-secret
+          volumeMounts:
+            - name: private-key
+              mountPath: /private
+            - name: public-key
+              mountPath: /public
+      volumes:
+        - name: private-key
+          configMap:
+            name: private-key
+        - name: public-key
+          configMap:
+            name: public-key
 ---
 apiVersion: v1
 kind: Service

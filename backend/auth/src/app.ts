@@ -1,8 +1,9 @@
 import express from "express";
+import fs from "fs";
 import { json } from "body-parser";
 import "express-async-errors";
 import cookieParser from "cookie-parser";
-import {createClient} from "redis";
+import { createClient } from "redis";
 
 import { currentUserRouter } from "./routes/current-user";
 import { loginRouter } from "./routes/login";
@@ -27,6 +28,9 @@ const redisClient = createClient({
 })
 
 redisClient.on("error", err => console.log("Redis Client Error", err));
+
+export const privateKey = fs.readFileSync("/private/private.key", "utf-8");
+export const publicKey = fs.readFileSync("/public/public.key", "utf-8");
 
 export { app };
 export { redisClient };

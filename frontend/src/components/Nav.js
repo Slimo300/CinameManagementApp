@@ -14,13 +14,9 @@ const Nav = ({ user, setUser }) => {
             window.localStorage.clear();
             setUser(null);
         } catch(err) {
-            alert(err);
+            alert(JSON.stringify(err.response.data));
         }
     };
-
-    if (user && !window.localStorage.getItem("token")) {
-        Logout();
-    }
 
     return (
         <nav className="violet navbar navbar-expand-lg bg-body-tertiary">

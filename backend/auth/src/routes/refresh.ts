@@ -25,6 +25,7 @@ router.post("/api/users/refresh", async (req: Request, res: Response) => {
             httpOnly: true,
             domain: process.env.DOMAIN
         })
+        
         res.status(401).send({"err": "user not authorized"});
         return;
     }

@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid"; 
 
-import { redisClient } from "../app";
+import { privateKey, redisClient } from "../app";
 import { User } from "../models/User";
 
 export enum TokenState {
@@ -71,7 +71,8 @@ export class Token {
             id: user.id,
             email: user.email,
             isAdmin: user.isAdmin,
-        }, process.env.JWT_KEY!, {
+        }, privateKey, {
+            algorithm: "RS256",
             expiresIn: parseInt(process.env.ACCESS_DURATION!),
         });
         
@@ -80,13 +81,13 @@ export class Token {
         const refreshToken = jwt.sign({
             id: tokenID,
             userId: user.id,
-        }, process.env.JWT_KEY!, {
+        }, process.env.REFRESH_SECRET!, {
+            algorithm: "HS256",
             expiresIn: parseInt(process.env.REFRESH_DURATION!),
         })
     
         await redisClient.set(user.id + ":" + tokenID, TokenState.Active);
         await redisClient.expire(user.id + ":" + tokenID, parseInt(process.env.REFRESH_DURATION!));
-    
 
         return {
             accessToken, refreshToken
@@ -95,7 +96,9 @@ export class Token {
 
     static async RefreshTokens(token: string) {
 
-        const payload = jwt.verify(token, process.env.JWT_KEY!);
+        const payload = jwt.verify(token, process.env.REFRESH_SECRET!, {
+            algorithms: ["HS256"]
+        });
 
         const tokenID = (payload as jwt.JwtPayload).id;
         const userID = (payload as jwt.JwtPayload).userId;
@@ -124,14 +127,16 @@ export class Token {
             id: user.id,
             email: user.email,
             isAdmin: user.isAdmin,
-        }, process.env.JWT_KEY!, {
+        }, privateKey, {
+            algorithm: "RS256",
             expiresIn: parseInt(process.env.ACCESS_DURATION!),
         });
 
         const refreshToken = jwt.sign({
             id: newTokenID,
             userId: user.id,
-        }, process.env.JWT_KEY!, {
+        }, process.env.REFRESH_SECRET!, {
+            algorithm: "HS256",
             expiresIn: parseInt(process.env.REFRESH_DURATION!),
         });
 
