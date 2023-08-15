@@ -16,6 +16,10 @@ const Nav = ({ user, setUser }) => {
         } catch(err) {
             alert(err);
         }
+    };
+
+    if (user && !window.localStorage.getItem("token")) {
+        Logout();
     }
 
     return (

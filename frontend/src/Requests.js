@@ -43,12 +43,8 @@ axiosObject.interceptors.request.use(
 
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-
-      console.log("interceptor: before refreshing token");
       
       await refreshAccessToken();
-
-      console.log("interceptor: After refresh")
 
       const access_token = window.localStorage.getItem("token");
 

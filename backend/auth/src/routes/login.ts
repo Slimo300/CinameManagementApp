@@ -1,10 +1,12 @@
 import express, {Request, Response} from "express";
 import { body, validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
+import {v4 as uuidv4} from "uuid";
 
+import { redisClient } from "../app";
 import { User } from "../models/User";
 import { Password } from "../helpers/password";
-import { Token } from "../models/Token";
+import { TokenState } from "../models/Token";
 
 const router = express.Router();
 
@@ -38,19 +40,19 @@ router.post("/api/users/login", [
         email: user.email,
         isAdmin: user.isAdmin,
     }, process.env.JWT_KEY!, {
-        expiresIn: 1000 * 60 * 20,
+        expiresIn: parseInt(process.env.ACCESS_DURATION!),
     });
 
-    const token = Token.build({
-        userID: user.id,
-    });
-    await token.save();
+    const tokenID = uuidv4();
+
+    await redisClient.set(user.id + ":" + tokenID, TokenState.Active);
+    await redisClient.expire(user.id + ":" + tokenID, parseInt(process.env.REFRESH_DURATION!));
 
     const refreshToken = jwt.sign({
-        id: token.id,
-        userId: token.userID,
+        id: tokenID,
+        userId: user.id,
     }, process.env.JWT_KEY!, {
-        expiresIn: "1d",
+        expiresIn: parseInt(process.env.REFRESH_DURATION!),
     })
 
     res.cookie("jwt", refreshToken, {

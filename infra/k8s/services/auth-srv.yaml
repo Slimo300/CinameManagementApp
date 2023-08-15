@@ -13,9 +13,12 @@ spec:
         app: auth
     spec:
       initContainers:
-        - name: db-test
+        - name: mongo-test
           image: busybox:1.31
-          command: ['sh', '-c', 'echo -e "Checking for the availability of MySQL Server deployment"; while ! nc -z auth-mongo-srv 27017; do sleep 1; printf "-"; done; echo -e "  >> MongoDB Server has started";']
+          command: ['sh', '-c', 'echo -e "Checking for the availability of MongoDB Server deployment"; while ! nc -z auth-mongo-srv 27017; do sleep 1; printf "-"; done; echo -e "  >> MongoDB Server has started";']
+        - name: redis-test
+          image: busybox:1.31
+          command: ['sh', '-c', 'echo -e "Checking for the availability of Redis Server deployment"; while ! nc -z auth-redis-srv 6379; do sleep 1; printf "-"; done; echo -e "  >> Redis Server has started";']
       containers:
         - name: auth
           image: slimo300/auth
@@ -25,10 +28,16 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
+            - name: REDIS_URI
+              value: "redis://auth-redis-srv:6379"
             - name: MONGO_URI
               value: "mongodb://auth-mongo-srv:27017/auth"
             - name: DOMAIN
               value: spellcinema.com
+            - name: REFRESH_DURATION
+              value: "86400"
+            - name: ACCESS_DURATION
+              value: "1200"
 ---
 apiVersion: v1
 kind: Service

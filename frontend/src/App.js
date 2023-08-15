@@ -24,10 +24,6 @@ function App() {
     getUser();
   }, []);
 
-  useEffect(() => {
-    if (user) console.log(user);
-  }, [user]);
-
   return (
     <div>
       <Router>

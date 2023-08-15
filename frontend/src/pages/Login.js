@@ -17,8 +17,10 @@ const Login = ({ setUser }) => {
                 withCredentials: true,
             })
             window.localStorage.setItem("token", response.data.accessToken);
-            console.log("safaf");
-            setUser(response.data);
+            
+            const userResponse = await axiosObject.get(BASE_URL+"/users/current-user");
+
+            setUser(userResponse.data);
         } catch (err) {
             console.log(err);
         }
