@@ -5,9 +5,6 @@ import { app, redisClient } from "./app";
 
 const start = async () => {
 
-    if (!process.env.JWT_KEY) {
-        throw new Error("JWT_KEY not defined");
-    }
     if (!process.env.MONGO_URI) {
         throw new Error("MONGO_URI not defined");
     }
@@ -16,6 +13,9 @@ const start = async () => {
     }
     if (!process.env.DOMAIN) {
         throw new Error("DOMAIN not defined");
+    }
+    if (!process.env.JWT_KEY) {
+        throw new Error("JWT_KEY not defined");
     }
     if (!process.env.REFRESH_DURATION) {
         throw new Error("REFRESH_DURATION not defined");

@@ -5,8 +5,9 @@ import {v4 as uuidv4} from "uuid";
 
 import { redisClient } from "../app";
 import { User } from "../models/User";
-import { Password } from "../helpers/password";
+import { Password } from "../services/password";
 import { TokenState } from "../models/Token";
+import { Token } from "../services/token";
 
 const router = express.Router();
 
@@ -35,25 +36,11 @@ router.post("/api/users/login", [
         return;
     }
 
-    const accessToken = jwt.sign({
+    const { accessToken, refreshToken } = await Token.NewTokenPairForUser({
         id: user.id,
         email: user.email,
         isAdmin: user.isAdmin,
-    }, process.env.JWT_KEY!, {
-        expiresIn: parseInt(process.env.ACCESS_DURATION!),
     });
-
-    const tokenID = uuidv4();
-
-    await redisClient.set(user.id + ":" + tokenID, TokenState.Active);
-    await redisClient.expire(user.id + ":" + tokenID, parseInt(process.env.REFRESH_DURATION!));
-
-    const refreshToken = jwt.sign({
-        id: tokenID,
-        userId: user.id,
-    }, process.env.JWT_KEY!, {
-        expiresIn: parseInt(process.env.REFRESH_DURATION!),
-    })
 
     res.cookie("jwt", refreshToken, {
         httpOnly: true,
