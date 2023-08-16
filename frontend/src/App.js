@@ -20,6 +20,10 @@ function App() {
         console.log("User not authorized: ", err.response)
       }
     }
+    // App listens for logout event occurence and sets user to null when that happens
+    window.addEventListener("logout", () => {
+      setUser(null);
+    })
 
     getUser();
   }, []);

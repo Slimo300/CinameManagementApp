@@ -18,6 +18,7 @@ async function refreshAccessToken() {
   
   } catch (err) {
     window.localStorage.clear();
+    window.dispatchEvent(new Event("logout"));
   }
 }
 
@@ -51,7 +52,6 @@ axiosObject.interceptors.request.use(
       if (access_token === null) return Promise.reject(error);
 
       axiosObject.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
-      console.log(originalRequest);
       return axiosObject(originalRequest);
     }
     return Promise.reject(error);
