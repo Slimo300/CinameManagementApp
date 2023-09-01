@@ -1,26 +1,16 @@
-import express, {Request, Response} from "express";
-import jwt from "jsonwebtoken";
-import { publicKey } from "../app";
+import express, {Request, Response } from "express";
 
-const router = express.Router();
+import { RequireAuth } from "@spellcinema/lib";
 
-router.get("/api/users/current-user", (req: Request, res: Response) => {
-    if (!req.headers.authorization) {
-        res.status(401).send({"err": "user not authorized, no token"});
-        return;
-    }
 
-    const bearerToken = req.headers.authorization.split(" ")[1];
+const currentUserRouter = (publicKey: string): express.Router => {
+    const router = express.Router();
+    router.get("/api/users/current-user", RequireAuth(publicKey), (req: Request, res: Response) => {
+        res.send( req.currentUser );
+    });
 
-    try {
-        const payload = jwt.verify(bearerToken, publicKey, {
-            algorithms: ["RS256"]
-        });
-        res.send(payload);
-    } catch(err) {
-        res.status(401).send({"err": "user not authorized"});
-    }
+    return router
+}
 
-});
 
-export {router as currentUserRouter};
+export {currentUserRouter};

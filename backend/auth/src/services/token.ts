@@ -1,7 +1,8 @@
 import jwt from "jsonwebtoken";
-import { v4 as uuidv4 } from "uuid"; 
+import { v4 as uuidv4 } from "uuid";
 
-import { privateKey, redisClient } from "../app";
+import { RedisClientType } from "redis";
+
 import { User } from "../models/User";
 
 export enum TokenState {
@@ -33,8 +34,16 @@ export class TokenOrphannedError extends Error {
     }
 }
 
-export class Token {
-    static async InvalidateToken(token: string) {
+export class TokenService {
+    redisClient: RedisClientType;
+    privateKey: string;
+
+    constructor(redisClient: RedisClientType, privateKey: string) {
+        this.redisClient = redisClient;
+        this.privateKey = privateKey;
+    }
+
+    async InvalidateToken(token: string) {
 
         if (token === "") {
             return;
@@ -44,34 +53,34 @@ export class Token {
         const tokenID = (payload as jwt.JwtPayload).id;
         const userID = (payload as jwt.JwtPayload).userId;
 
-        const keys = await redisClient.keys(userID+":*"+tokenID);
+        const keys = await this.redisClient.keys(userID+":*"+tokenID);
         if (keys.length === 1) {
-            await redisClient.set(keys[0], TokenState.Blacklisted, {KEEPTTL: true});
+            await this.redisClient.set(keys[0], TokenState.Blacklisted, {KEEPTTL: true});
         }
     }
 
-    private static async InvalidateTokensChildren(userID: string, tokenID: string) {
+    private async InvalidateTokensChildren(userID: string, tokenID: string) {
 
         let t = tokenID;
 
         while(true) {
-            const keys = await redisClient.keys(userID+":"+t+":*");
+            const keys = await this.redisClient.keys(userID+":"+t+":*");
 
             if (keys.length === 0) break;
 
-            await redisClient.set(keys[0], TokenState.Blacklisted, {KEEPTTL: true});
+            await this.redisClient.set(keys[0], TokenState.Blacklisted, {KEEPTTL: true});
 
             t = keys[0].split(":")[2];
         }
     }
 
-    static async NewTokenPairForUser(user: UserData) {
+    async NewTokenPairForUser(user: UserData) {
 
         const accessToken = jwt.sign({
             id: user.id,
             email: user.email,
             isAdmin: user.isAdmin,
-        }, privateKey, {
+        }, this.privateKey, {
             algorithm: "RS256",
             expiresIn: parseInt(process.env.ACCESS_DURATION!),
         });
@@ -86,15 +95,15 @@ export class Token {
             expiresIn: parseInt(process.env.REFRESH_DURATION!),
         })
     
-        await redisClient.set(user.id + ":" + tokenID, TokenState.Active);
-        await redisClient.expire(user.id + ":" + tokenID, parseInt(process.env.REFRESH_DURATION!));
+        await this.redisClient.set(user.id + ":" + tokenID, TokenState.Active);
+        await this.redisClient.expire(user.id + ":" + tokenID, parseInt(process.env.REFRESH_DURATION!));
 
         return {
             accessToken, refreshToken
         };
     }
 
-    static async RefreshTokens(token: string) {
+    async RefreshTokens(token: string) {
 
         const payload = jwt.verify(token, process.env.REFRESH_SECRET!, {
             algorithms: ["HS256"]
@@ -103,20 +112,20 @@ export class Token {
         const tokenID = (payload as jwt.JwtPayload).id;
         const userID = (payload as jwt.JwtPayload).userId;
 
-        const key = (await redisClient.keys(userID+":*"+tokenID))[0];
+        const key = (await this.redisClient.keys(userID+":*"+tokenID))[0];
 
-        const tokenState = await redisClient.get(key);
+        const tokenState = await this.redisClient.get(key);
 
         if (tokenState === TokenState.Blacklisted) {
-            Token.InvalidateTokensChildren(userID, tokenID);
+            this.InvalidateTokensChildren(userID, tokenID);
 
             throw new TokenBlacklistedError();
         }
 
         const newTokenID = uuidv4();
 
-        await redisClient.set(userID+":"+tokenID+":"+newTokenID, TokenState.Active);
-        redisClient.expire(userID+":"+tokenID+":"+newTokenID, parseInt(process.env.REFRESH_DURATION!));
+        await this.redisClient.set(userID+":"+tokenID+":"+newTokenID, TokenState.Active);
+        this.redisClient.expire(userID+":"+tokenID+":"+newTokenID, parseInt(process.env.REFRESH_DURATION!));
 
         const user = await User.findById(userID);
         if (!user) {
@@ -127,7 +136,7 @@ export class Token {
             id: user.id,
             email: user.email,
             isAdmin: user.isAdmin,
-        }, privateKey, {
+        }, this.privateKey, {
             algorithm: "RS256",
             expiresIn: parseInt(process.env.ACCESS_DURATION!),
         });

@@ -1,22 +1,28 @@
 import express, { Request, Response } from "express";
 
-import { Token } from "../services/token";
+import { TokenService } from "../services/token";
 
-const router = express.Router();
+const logoutRouter = (tokenService: TokenService): express.Router => {
 
-router.post("/api/users/logout", async (req: Request, res: Response) => {
+    const router = express.Router();
 
-    try {
-        await Token.InvalidateToken(req.cookies.jwt);
-    } catch(err) {
-        console.log(err);
-    }
+    router.post("/api/users/logout", async (req: Request, res: Response) => {
 
-    res.clearCookie("jwt", {
-        domain: process.env.DOMAIN,
-        httpOnly: true
+        try {
+            await tokenService.InvalidateToken(req.cookies.jwt);
+        } catch(err) {
+            console.log(err);
+        }
+
+        res.clearCookie("jwt", {
+            domain: process.env.DOMAIN,
+            httpOnly: true
+        });
+        res.send({"msg": "ok"});
     });
-    res.send({"msg": "ok"});
-})
 
-export { router as logoutRouter };
+    return router;
+}
+
+
+export { logoutRouter };
