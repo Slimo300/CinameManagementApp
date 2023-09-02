@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { body } from "express-validator";
 
 import { User } from "../models/User";
-import { ValidateRequest } from "@spellcinema/lib";
+import { BadRequestError, ValidateRequest } from "@spellcinema/lib";
 
 const registerRouter = (): express.Router => {
     
@@ -22,10 +22,7 @@ const registerRouter = (): express.Router => {
         const existingUser = await User.findOne({ email });
     
         if (existingUser) {
-            //TODO: BadRequestError
-            console.log("TODO: BadRequestError");
-            res.status(400).send({"err": "email already in database"});
-            return;
+            throw new BadRequestError("email already in database");
         }
     
         const user = User.build({
