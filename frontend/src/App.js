@@ -6,6 +6,7 @@ import Index from "./pages/Index";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import axiosObject, { BASE_URL } from "./Requests";
+import AdminPanel from "./pages/AdminPanel";
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
           <Route path="/" element={<Index />}/>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login setUser={setUser} />} />
+          <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </Router>
     </div>
