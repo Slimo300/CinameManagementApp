@@ -13,6 +13,7 @@ export const ModalNewMovie = ({ show, toggle }) => {
     const [title, setTitle] = useState("");
     const [pictureURI, setPictureURI] = useState("");
     const [runtime, setRuntime] = useState("");
+    const [releaseYear, setReleaseYear] = useState("");
 
     const [genre, setGenre] = useState("");
     const [genreList, setGenreList] = useState([]);
@@ -71,27 +72,33 @@ export const ModalNewMovie = ({ show, toggle }) => {
         setGenreList(genreList.filter(g => {return g !== genre}));
     };
 
-    const FillForm = (movieData) => {
+    const FillInForm = (movieData) => {
         setTitle(movieData.titleText?movieData.titleText.text:"");
         setPictureURI(movieData.primaryImage?movieData.primaryImage.url:"");
         setRuntime(movieData.runtime?movieData.runtime.seconds:"");
         setGenreList(movieData.genres.genres.map(g => {return g.text}));
+        setReleaseYear(movieData.releaseYear.year);
         document.getElementById("dropdownUsers").classList.remove("show");
     };
 
     return (
-        <Modal id="buy" tabIndex="-1" role="dialog" isOpen={show} toggle={toggle}>
+        <Modal size="xl" tabIndex="-1" role="dialog" isOpen={show} toggle={toggle}>
             <div role="document">
                 <ModalHeader toggle={toggle} className="bg-violet text-light text-center">
                     New Movie
                 </ModalHeader>
                 <ModalBody>
-                    <div>
+                    <div className="d-flex column justify-content-around">
                         {msg!==""?<h5 className="mb-4 text-danger">{msg}</h5>:null}
                         <form onSubmit={AddMovie}>
+                            <h2 className="text-violet">Type in Movie info</h2>
                             <div className="form-group">
                                 <label htmlFor="titlel">Title:</label>
                                 <input name="title" type="text" className="form-control" placeholder="Title" value={title} onChange={(e)=> setTitle(e.target.value) }/>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="runtime">Release Year:</label>
+                                <input name="runtime" type="text" className="form-control" placeholder="Runtime" value={releaseYear} onChange={(e)=> setReleaseYear(e.target.value) }/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="picture">Picture URI:</label>
@@ -126,10 +133,8 @@ export const ModalNewMovie = ({ show, toggle }) => {
                             </div>
                         </form>
 
-                        <hr />
-
-                        <h2 className="text-violet pt-2 text-center">Or Find a Movie!</h2>
                         <form className="pb-5">
+                            <h2 className="text-violet pt-2 text-center">Or Find a Movie!</h2>
                             <div className="form-group">
                                 <div className="input-group">
                                     <input type="text" className="form-control" placeholder="Search for a movie" value={searchTitle} onChange={ e => setSearchTitle(e.target.value) }/>
@@ -143,7 +148,7 @@ export const ModalNewMovie = ({ show, toggle }) => {
                                 <div id="dropdownUsers" className="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
                                     {foundMovies.length===0?null:foundMovies.map( item => {
                                         return <div key={item.ID} className="d-flex justify-content-center w-100">
-                                                <FoundMovie movie={item} fillForm={FillForm}/>
+                                                <FoundMovie movie={item} fillForm={FillInForm}/>
                                                 <hr />
                                             </div>
                                     })}
@@ -167,7 +172,7 @@ const GenreEntry = ({ genre, deleteGenre }) => {
 
 const FoundMovie = ({ movie, fillForm }) => {
     return (
-        <div className="d-flex col justify-content-center w-100">
+        <div className="d-flex column w-100">
             <img width={60} height={60} alt="movie" src={movie.primaryImage?movie.primaryImage.url:""}/>
             <p className="px-4">{movie.titleText.text + " (" + movie.releaseYear.year + ")"}</p>
             <button className="btn text-light bg-violet" onClick={e => {e.preventDefault(); fillForm(movie)}}><FontAwesomeIcon icon={faPlus}/></button>
