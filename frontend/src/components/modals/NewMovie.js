@@ -25,7 +25,7 @@ export const ModalNewMovie = ({ show, toggle }) => {
         e.preventDefault();
         try {
             console.log({
-                title, pictureURI, runtime, genreList
+                title, releaseYear, pictureURI, runtime, genreList
             })
         } catch (err) {
             setMsg(err);
@@ -52,7 +52,8 @@ export const ModalNewMovie = ({ show, toggle }) => {
           params: {
             titleType: 'movie',
             info: "base_info",
-            limit: 3,
+            exact: true,
+            limit: 10,
           },
           headers: {
             'X-RapidAPI-Key': window._env_.MOVIES_API_KEY,
@@ -88,8 +89,8 @@ export const ModalNewMovie = ({ show, toggle }) => {
                     New Movie
                 </ModalHeader>
                 <ModalBody>
+                    {msg!==""?<h5 className="mb-4 w-100 text-center text-danger">{msg}</h5>:null}
                     <div className="d-flex column justify-content-around">
-                        {msg!==""?<h5 className="mb-4 text-danger">{msg}</h5>:null}
                         <form onSubmit={AddMovie}>
                             <h2 className="text-violet">Type in Movie info</h2>
                             <div className="form-group">
@@ -172,7 +173,7 @@ const GenreEntry = ({ genre, deleteGenre }) => {
 
 const FoundMovie = ({ movie, fillForm }) => {
     return (
-        <div className="d-flex column w-100">
+        <div className="d-flex column w-100 justify-content-around pb-1">
             <img width={60} height={60} alt="movie" src={movie.primaryImage?movie.primaryImage.url:""}/>
             <p className="px-4">{movie.titleText.text + " (" + movie.releaseYear.year + ")"}</p>
             <button className="btn text-light bg-violet" onClick={e => {e.preventDefault(); fillForm(movie)}}><FontAwesomeIcon icon={faPlus}/></button>
