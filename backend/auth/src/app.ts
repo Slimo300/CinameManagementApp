@@ -5,11 +5,11 @@ import "express-async-errors";
 import cookieParser from "cookie-parser";
 import { RedisClientType, createClient } from "redis";
 
-import { currentUserRouter } from "./routes/current-user";
-import { loginRouter } from "./routes/login";
-import { logoutRouter } from "./routes/logout";
-import { registerRouter } from "./routes/register";
-import { refreshRouter } from "./routes/refresh";
+import { currentUserRouter } from "./routes/CurrentUser";
+import { loginRouter } from "./routes/Login";
+import { logoutRouter } from "./routes/Logout";
+import { registerRouter } from "./routes/Register";
+import { refreshRouter } from "./routes/Refresh";
 import { ErrorHandler, NotFoundError } from "@spellcinema/lib";
 import { TokenService } from "./services/token";
 
