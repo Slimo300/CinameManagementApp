@@ -25,3 +25,11 @@ build:
         manual:
           - src: "src/**/*.ts"
             dest: .
+    - image: slimo300/spectacles
+      context: backend/spectacles
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .

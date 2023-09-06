@@ -17,6 +17,13 @@ spec:
                 name: auth-srv
                 port:
                   number: 3000
+          - path: /api/spectacles/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: spectacles-srv
+                port:
+                  number: 3000
           - path: /?(.*)
             pathType: Prefix
             backend:

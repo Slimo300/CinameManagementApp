@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spectacles-mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spectacles-mongo
+  template:
+    metadata:
+      labels:
+        app: spectacles-mongo
+    spec:
+      containers:
+        - name: spectacles-mongo
+          image: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spectacles-mongo-srv
+spec:
+  selector:
+    app: spectacles-mongo
+  ports:
+    - name: db
+      protocol: TCP
+      port: 27017
+      targetPort: 27017

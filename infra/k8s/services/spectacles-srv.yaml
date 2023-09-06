@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spectacles-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spectacles
+  template:
+    metadata:
+      labels:
+        app: spectacles
+    spec:
+      initContainers:
+        - name: mongo-test
+          image: busybox:1.31
+          command: ['sh', '-c', 'echo -e "Checking for the availability of MongoDB Server deployment"; while ! nc -z spectacles-mongo-srv 27017; do sleep 1; printf "-"; done; echo -e "  >> MongoDB Server has started";']
+      containers:
+        - name: spectacles
+          image: slimo300/spectacles
+          env: 
+            - name: MONGO_URI
+              value: "mongodb://spectacles-mongo-srv:27017/spectacles"
+          volumeMounts:
+            - name: public-key
+              mountPath: /rsa
+      volumes:
+        - name: public-key
+          configMap:
+            name: public-key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spectacles-srv
+spec:
+  selector:
+    app: spectacles
+  ports:
+    - name: spectacles
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
