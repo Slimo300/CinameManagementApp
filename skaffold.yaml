@@ -11,6 +11,10 @@ build:
       context: frontend
       docker:
         dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.js"
+            dest: .
     - image: slimo300/auth
       context: backend/auth
       docker:
