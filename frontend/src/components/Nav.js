@@ -39,6 +39,7 @@ const Nav = ({ user, setUser }) => {
                             <NavLink className="nav-link" to="/pricing">Pricing</NavLink>
                         </li>
                     </ul>
+                    <NavLink className="nav-item nav-link px-2" to="/admin">Admin</NavLink>
                     {!user?<NavLink className="nav-item nav-link px-2" to="/login">Login</NavLink>:null}
                     {!user?<NavLink className="nav-item nav-link px-2" to="/register">Register</NavLink>:null}
                     {user?<button className="btn bg-violet btn-primary" onClick={Logout}>Log Out</button>:null}

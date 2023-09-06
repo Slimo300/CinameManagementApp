@@ -4,14 +4,15 @@ import axios from "axios";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faXmark } from "@fortawesome/free-solid-svg-icons";
+import axiosObject, { BASE_URL } from "../../Requests";
 
 
 export const ModalNewMovie = ({ show, toggle }) => {
 
-    const [msg, setMsg] = useState("");
+    const [errors, setErrors] = useState(null);
 
     const [title, setTitle] = useState("");
-    const [pictureURI, setPictureURI] = useState("");
+    const [pictureUri, setPictureUri] = useState("");
     const [runtime, setRuntime] = useState("");
     const [releaseYear, setReleaseYear] = useState("");
 
@@ -20,17 +21,6 @@ export const ModalNewMovie = ({ show, toggle }) => {
 
     const [searchTitle, setSearchTitle] = useState("");
     const [foundMovies, setFoundMovies] = useState([]);
-
-    const AddMovie = (e) => {
-        e.preventDefault();
-        try {
-            console.log({
-                title, releaseYear, pictureURI, runtime, genreList
-            })
-        } catch (err) {
-            setMsg(err);
-        }
-    };
 
     useEffect(() => {
             let dropdown = document.getElementById("dropdownUsers");
@@ -41,6 +31,42 @@ export const ModalNewMovie = ({ show, toggle }) => {
                 dropdown.classList.remove("show");
             }
     }, [foundMovies]);
+
+    const clear = () => {
+        setTitle("");
+        setPictureUri("");
+        setRuntime("");
+        setReleaseYear("");
+        setGenre("");
+        setGenreList([]);
+        setSearchTitle("");
+        setFoundMovies([]);
+    }
+
+    const AddMovie = async (e) => {
+        e.preventDefault();
+        try {
+            await axiosObject.post(BASE_URL+"/spectacles/movies", {
+                title, releaseYear, runtime, 
+                genres: genreList,
+            });
+            clear();
+            setErrors(
+                <ul className="bg-success text-light" onClick={e => setErrors(null)}>
+                    <li>Movie Created!</li>
+                </ul>
+            )
+        } catch (err) {
+            console.log(err);
+            setErrors(
+                <ul className="bg-danger text-light" onClick={e => setErrors(null)}>
+                    {err.response.data.map(err => {
+                        return <li key={err.message}>{err.message}</li>
+                    })}
+                </ul>
+            );
+        }
+    };
 
     const MovieSearch = async (title) => {
         let dropdown = document.getElementById("dropdownUsers");
@@ -75,7 +101,7 @@ export const ModalNewMovie = ({ show, toggle }) => {
 
     const FillInForm = (movieData) => {
         setTitle(movieData.titleText?movieData.titleText.text:"");
-        setPictureURI(movieData.primaryImage?movieData.primaryImage.url:"");
+        setPictureUri(movieData.primaryImage?movieData.primaryImage.url:"");
         setRuntime(movieData.runtime?movieData.runtime.seconds:"");
         setGenreList(movieData.genres.genres.map(g => {return g.text}));
         setReleaseYear(movieData.releaseYear.year);
@@ -89,7 +115,7 @@ export const ModalNewMovie = ({ show, toggle }) => {
                     New Movie
                 </ModalHeader>
                 <ModalBody>
-                    {msg!==""?<h5 className="mb-4 w-100 text-center text-danger">{msg}</h5>:null}
+                    { errors }
                     <div className="d-flex column justify-content-around">
                         <form onSubmit={AddMovie}>
                             <h2 className="text-violet">Type in Movie info</h2>
@@ -103,7 +129,7 @@ export const ModalNewMovie = ({ show, toggle }) => {
                             </div>
                             <div className="form-group">
                                 <label htmlFor="picture">Picture URI:</label>
-                                <input name="picture" type="text" className="form-control" placeholder="PictureURI" value={pictureURI} onChange={(e)=> setPictureURI(e.target.value) }/>
+                                <input name="picture" type="text" className="form-control" placeholder="Picture URI" value={pictureUri} onChange={(e)=> setPictureUri(e.target.value) }/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="runtime">Runtime:</label>
