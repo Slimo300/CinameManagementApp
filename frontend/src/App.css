@@ -1,5 +1,12 @@
-.violet {
-    background-color:rgba(71,26,160,255)!important;
+.bg-violet {
+    background-color: rgba(71,26,160,255)!important;
+}
+
+.text-violet {
+    color: rgba(71,26,160,255)!important;
+}
+.text-violet-light {
+    color: rgba(71,26,160,120)!important;
 }
 
 .nav-link {

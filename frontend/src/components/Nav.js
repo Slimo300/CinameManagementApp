@@ -19,7 +19,7 @@ const Nav = ({ user, setUser }) => {
     };
 
     return (
-        <nav className="violet navbar navbar-expand-lg bg-body-tertiary">
+        <nav className="bg-violet navbar navbar-expand-lg bg-body-tertiary">
             <div className="container-fluid">
                 <a className="navbar-brand" href="/">
                     <img src={logo} alt="Logo" width="250" height="50" className="d-inline-block align-text-top" />
@@ -41,7 +41,7 @@ const Nav = ({ user, setUser }) => {
                     </ul>
                     {!user?<NavLink className="nav-item nav-link px-2" to="/login">Login</NavLink>:null}
                     {!user?<NavLink className="nav-item nav-link px-2" to="/register">Register</NavLink>:null}
-                    {user?<button className="btn violet btn-primary" onClick={Logout}>Log Out</button>:null}
+                    {user?<button className="btn bg-violet btn-primary" onClick={Logout}>Log Out</button>:null}
                 </div>
             </div>
         </nav>
