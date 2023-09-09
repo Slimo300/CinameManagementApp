@@ -8,7 +8,7 @@ interface MovieAttrs {
     genres?: String[];
 }
 
-interface MovieDoc extends mongoose.Document {
+export interface MovieDoc extends mongoose.Document {
     title: String;
     releaseYear: Number;
     runtime: Number;

@@ -47,7 +47,7 @@ export const ModalNewMovie = ({ show, toggle }) => {
         e.preventDefault();
         try {
             await axiosObject.post(BASE_URL+"/spectacles/movies", {
-                title, releaseYear, runtime, 
+                title, releaseYear, runtime, pictureUri,
                 genres: genreList,
             });
             clear();
@@ -125,7 +125,7 @@ export const ModalNewMovie = ({ show, toggle }) => {
                             </div>
                             <div className="form-group">
                                 <label htmlFor="runtime">Release Year:</label>
-                                <input name="runtime" type="text" className="form-control" placeholder="Runtime" value={releaseYear} onChange={(e)=> setReleaseYear(e.target.value) }/>
+                                <input name="runtime" type="text" className="form-control" placeholder="Release Year" value={releaseYear} onChange={(e)=> setReleaseYear(e.target.value) }/>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="picture">Picture URI:</label>
