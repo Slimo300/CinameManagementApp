@@ -9,7 +9,7 @@ interface SpectaclAttrs {
     endsAt: Date;
 }
 
-interface SpectaclDoc extends mongoose.Document {
+export interface SpectaclDoc extends mongoose.Document {
     movie: MovieDoc;
     screeningRoom: ScreeningRoomDoc;
     startsAt: Date;

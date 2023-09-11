@@ -8,22 +8,26 @@ import { NewMovieRouter } from "./routes/NewMovie";
 import { GetMovieRouter } from "./routes/GetMovie";
 import { GetScreeningRoomRouter } from "./routes/GetScreeningRooms";
 import { NewSpectaclRouter } from "./routes/NewSpectacl";
+import { GetSpectaclesRouter } from "./routes/GetSpectacles";
+import { SpectaclService } from "./services/Spectacles";
 
 const publicKey = fs.readFileSync("/rsa/public.key", "utf-8");
 
 const app = express();
 
+const spectaclService = new SpectaclService();
+
 app.set("trust proxy", true);
 app.use(json());
-app.use(RequireAuth(publicKey));
 
-app.use(GetScreeningRoomRouter());
+app.use(GetScreeningRoomRouter(publicKey));
 app.use(GetMovieRouter())
-app.use(NewMovieRouter());
-app.use(NewSpectaclRouter());
+app.use(NewMovieRouter(publicKey));
+app.use(NewSpectaclRouter(publicKey, spectaclService));
+app.use(GetSpectaclesRouter(spectaclService));
 
 app.all("*", () => {
-    throw new NotFoundError();
+    throw new NotFoundError("Route not found");
 })
 
 app.use(ErrorHandler);

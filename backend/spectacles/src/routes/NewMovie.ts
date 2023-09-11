@@ -1,19 +1,20 @@
-import { BadRequestError, RequireAdmin, RequireAuth, ValidateRequest } from "@spellcinema/lib";
+import { BadRequestError, RequireAdmin, ValidateRequest } from "@spellcinema/lib";
 import express, { Request, Response } from "express";
 
 import { body } from "express-validator";
 import { Movie } from "../models/Movie";
 
-export const NewMovieRouter = (): express.Router => {
+export const NewMovieRouter = (publicKey: string): express.Router => {
     let router = express.Router();
 
     router.post("/api/spectacles/movies",
+        RequireAdmin(publicKey),
+
         body("title").not().isEmpty().withMessage("title field cannot be empty"),
         body("releaseYear").isInt({ min: 1900, max: 2030 }).withMessage("releaseYear field is not a valid year"),
         body("runtime").isInt({ min: 0 }).withMessage("runtime field cmust be an integer value larger than 0"),
 
         ValidateRequest,
-        RequireAdmin,
         async (req: Request, res: Response) => {
             const { title, releaseYear, runtime, pictureUri, genres } = req.body;
 

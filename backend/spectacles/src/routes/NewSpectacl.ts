@@ -1,53 +1,38 @@
 import express, { Request, Response } from "express";
-import { Spectacl } from "../models/Spectacl";
-import { BadRequestError, ForbiddenError, NotFoundError } from "@spellcinema/lib";
-import { ScreeningRoom } from "../models/ScreengingRoom";
-import { Movie } from "../models/Movie";
+import { body } from "express-validator";
 
-export const NewSpectaclRouter = (): express.Router => {
+import { BadRequestError, RequireAdmin, ValidateRequest } from "@spellcinema/lib";
+
+import { SpectaclService } from "../services/Spectacles";
+
+export const NewSpectaclRouter = (publicKey: string, SpectaclService: SpectaclService): express.Router => {
     const router = express.Router();
 
-    router.post("/api/spectacles", async (req: Request, res: Response) => {
+    router.post("/api/spectacles",
+        RequireAdmin(publicKey),
+    
+        body("movieID").not().isEmpty().withMessage("movieID must be set"),
+        body("screeningRoomID").not().isEmpty().withMessage("screeningRoomID must be set"),
+        body("startTime").isISO8601().toDate().withMessage("startTime must be a valid Date"),
+        ValidateRequest,
+            
+        async (req: Request, res: Response) => {
 
-        const { movieID, screeningRoomID, startTime, endTime } = req.body;
+            const { movieID, screeningRoomID, startTime } = req.body;
 
-        const spectaclBefore = await Spectacl.findOne({
-            screeningRoom: screeningRoomID,
-            endsAt: {
-                $gte: startTime, $lte: endTime
+            if (!(startTime instanceof Date)) {
+                throw new BadRequestError("startTime must be valid dates");
             }
-        })
 
-        if (spectaclBefore) {
-            throw new ForbiddenError(`There is already a spectacl in ${spectaclBefore.screeningRoom.roomNumber} starting at ${spectaclBefore.startsAt} ending ${spectaclBefore.endsAt}`);
-        }
-
-        const spectaclAfter = await Spectacl.findOne({
-            screeningRoom: screeningRoomID,
-            startsAt: {
-                $gte: startTime, $lte: endTime
+            try {
+                const spectacl = SpectaclService.NewSpectacl({
+                    movieID, screeningRoomID, startTime
+                })
+                res.status(201).send(spectacl);
+            } catch (err) {
+                throw err;
             }
-        })
-
-        if (spectaclAfter) {
-            throw new ForbiddenError(`There is already a spectacl in ${spectaclAfter.screeningRoom.roomNumber} starting at ${spectaclAfter.startsAt} ending ${spectaclAfter.endsAt}`);
-        }
-
-        const screeningRoom = await ScreeningRoom.findById(screeningRoomID);
-        if (!screeningRoom) throw new BadRequestError(`Screening room with id ${screeningRoomID} not found`);
-        const movie = await Movie.findById(movieID);
-        if (!movie) throw new BadRequestError(`Movie with id ${movieID} not found`);
-
-        const spectacl = Spectacl.build({
-            movie: movie,
-            screeningRoom: screeningRoom,
-            startsAt: new Date(startTime),
-            endsAt: new Date(endTime),
-        })
-        await spectacl.save()
-
-        res.status(201).send({msg: "ok"});
-    });
+        });
 
     return router;
 }
