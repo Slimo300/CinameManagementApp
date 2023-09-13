@@ -1,6 +1,7 @@
+import fs from "fs";
 import mongoose from "mongoose";
 
-import { app } from "./app";
+import { NewApp } from "./app";
 
 
 const start = async () => {
@@ -10,19 +11,23 @@ const start = async () => {
     }
 
     try {
+        const publicKey = fs.readFileSync("/rsa/public.key", "utf-8");
+
         await mongoose.connect(process.env.MONGO_URI, {
             autoIndex: true,
             autoCreate: true
         });
 
+        const app = NewApp(publicKey);
+        
+        app.listen(3000, () => {
+            console.log("Listening on port 3000!!!!!");
+        })
+
     } catch(err) {
         console.log(err);
         process.exit(1);
     }
-
-    app.listen(3000, () => {
-        console.log("Listening on port 3000!!!!!");
-    })
 }
 
 start();

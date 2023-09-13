@@ -1,18 +1,14 @@
 import express, { Request, Response } from "express";
-import { param } from "express-validator";
 
-import { RequireAdmin, ValidateRequest } from "@spellcinema/lib";
+import { RequireAdmin } from "@spellcinema/lib";
 
 import { SpectaclService } from "../services/Spectacles";
 
-export const DeleteSpectaclRouter = (publicKey: string, SpectaclService: SpectaclService): express.Router => {
+export const DeleteSpectaclRouter = (publicKey: string): express.Router => {
     const router = express.Router();
 
     router.delete("/api/spectacles/:id",
         RequireAdmin(publicKey),
-
-        param("id").trim().not().isEmpty().withMessage("\"id\" param cannot be blank"),
-        ValidateRequest, 
         async (req: Request, res: Response) => {
             const { id } = req.params;
 

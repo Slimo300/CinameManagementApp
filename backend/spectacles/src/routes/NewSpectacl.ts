@@ -5,7 +5,7 @@ import { BadRequestError, RequireAdmin, ValidateRequest } from "@spellcinema/lib
 
 import { SpectaclService } from "../services/Spectacles";
 
-export const NewSpectaclRouter = (publicKey: string, SpectaclService: SpectaclService): express.Router => {
+export const NewSpectaclRouter = (publicKey: string): express.Router => {
     const router = express.Router();
 
     router.post("/api/spectacles",
@@ -24,14 +24,16 @@ export const NewSpectaclRouter = (publicKey: string, SpectaclService: SpectaclSe
                 throw new BadRequestError("startTime must be valid dates");
             }
 
+            let spectacl;
             try {
-                const spectacl = SpectaclService.NewSpectacl({
+                spectacl = await SpectaclService.NewSpectacl({
                     movieID, screeningRoomID, startTime
                 })
-                res.status(201).send(spectacl);
             } catch (err) {
                 throw err;
             }
+
+            res.status(201).send(spectacl);
         });
 
     return router;

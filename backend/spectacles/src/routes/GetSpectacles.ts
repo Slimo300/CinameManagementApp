@@ -3,7 +3,7 @@ import express, { Request, Response } from "express";
 import { query } from "express-validator";
 import { SpectaclService } from "../services/Spectacles";
 
-export const GetSpectaclesRouter = (SpectaclService: SpectaclService): express.Router => {
+export const GetSpectaclesRouter = (): express.Router => {
     const router = express.Router();
 
     router.get("/api/spectacles",

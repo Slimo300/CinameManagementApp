@@ -3,33 +3,36 @@ import fs from "fs";
 import { json } from "body-parser";
 import "express-async-errors";
 
-import { NotFoundError, ErrorHandler, RequireAuth } from "@spellcinema/lib";
+import { NotFoundError, ErrorHandler } from "@spellcinema/lib";
 import { NewMovieRouter } from "./routes/NewMovie";
 import { GetMovieRouter } from "./routes/GetMovie";
-import { GetScreeningRoomRouter } from "./routes/GetScreeningRooms";
+import { GetScreeningRoomsRouter } from "./routes/GetScreeningRooms";
 import { NewSpectaclRouter } from "./routes/NewSpectacl";
 import { GetSpectaclesRouter } from "./routes/GetSpectacles";
-import { SpectaclService } from "./services/Spectacles";
+import { DeleteSpectaclRouter } from "./routes/DeleteSpectacl";
+import { UpdateSpectaclRouter } from "./routes/UpdateSpectacl";
 
-const publicKey = fs.readFileSync("/rsa/public.key", "utf-8");
+export const NewApp = (publicKey: string): express.Application => {
 
-const app = express();
+    const app = express();
 
-const spectaclService = new SpectaclService();
-
-app.set("trust proxy", true);
-app.use(json());
-
-app.use(GetScreeningRoomRouter(publicKey));
-app.use(GetMovieRouter())
-app.use(NewMovieRouter(publicKey));
-app.use(NewSpectaclRouter(publicKey, spectaclService));
-app.use(GetSpectaclesRouter(spectaclService));
-
-app.all("*", () => {
-    throw new NotFoundError("Route not found");
-})
-
-app.use(ErrorHandler);
-
-export { app };
+    app.set("trust proxy", true);
+    app.use(json());
+    
+    app.use(DeleteSpectaclRouter(publicKey));
+    app.use(GetScreeningRoomsRouter(publicKey));
+    app.use(GetMovieRouter())
+    app.use(GetSpectaclesRouter());
+    app.use(NewMovieRouter(publicKey));
+    app.use(NewSpectaclRouter(publicKey));
+    app.use(UpdateSpectaclRouter(publicKey));
+    
+    app.all("*", () => {
+        throw new NotFoundError("Route not found");
+    })
+    
+    app.use(ErrorHandler);
+    
+    
+    return app;
+}

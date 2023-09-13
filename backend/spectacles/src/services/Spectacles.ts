@@ -1,6 +1,6 @@
 import { startOfDay, endOfDay } from "date-fns";
 
-import { BadRequestError, ForbiddenError, NotFoundError } from "@spellcinema/lib";
+import { BadRequestError, ForbiddenError, NotFoundError, ConflictError } from "@spellcinema/lib";
 
 import { Movie } from "../models/Movie";
 import { ScreeningRoom } from "../models/ScreengingRoom";
@@ -14,7 +14,7 @@ interface SpectaclAttrs {
 
 export class SpectaclService {
     
-    public async NewSpectacl(attrs: SpectaclAttrs): Promise<SpectaclDoc> {
+    public static async NewSpectacl(attrs: SpectaclAttrs): Promise<SpectaclDoc> {
 
         const movie = await Movie.findById(attrs.movieID);
         if (!movie) {
@@ -29,7 +29,11 @@ export class SpectaclService {
         const endTime = new Date(attrs.startTime.getTime());
         endTime.setSeconds(endTime.getSeconds() + movie.runtime.valueOf());
 
-        await this.CheckScreeningRoomAvailabilty(attrs.screeningRoomID, attrs.startTime, endTime);
+        try {
+            await SpectaclService.CheckScreeningRoomAvailabilty(attrs.screeningRoomID, attrs.startTime, endTime);
+        } catch (err) {
+            throw err;
+        }
 
         // Creating a spectacl
         const spectacl = Spectacl.build({
@@ -43,14 +47,14 @@ export class SpectaclService {
         return spectacl;
     } 
 
-    public async DeleteSpectacl(ID: string): Promise<SpectaclDoc> {
+    public static async DeleteSpectacl(ID: string): Promise<SpectaclDoc> {
         const spectacl = await Spectacl.findByIdAndDelete(ID);
         if (!spectacl) throw new NotFoundError(`No Spectacl with ID ${ID}`);
 
         return spectacl;
   }
 
-    public async GetSpectacles(date: Date): Promise<SpectaclDoc[]> {
+    public static async GetSpectacles(date: Date): Promise<SpectaclDoc[]> {
         
         const spectacles = await Spectacl.find({
             startsAt: { $gte: startOfDay(date), $lte: endOfDay(date) }
@@ -59,13 +63,14 @@ export class SpectaclService {
         return spectacles;
     }
 
-    public async UpdateSpectacl(ID: string, attrs: SpectaclAttrs): Promise<SpectaclDoc> {
+    public static async UpdateSpectacl(ID: string, attrs: SpectaclAttrs): Promise<SpectaclDoc> {
         const spectacl = await Spectacl.findById(ID).populate("movie");
         if (!spectacl) {
             throw new NotFoundError(`Spectacl with id ${ID} not found`);
         } 
 
-        if (attrs.movieID !== "") {
+        if (attrs.movieID) {
+
             const movie = await Movie.findById(attrs.movieID);
             if (movie) {
                 spectacl.movie = movie;
@@ -75,8 +80,8 @@ export class SpectaclService {
             }
         }
 
-        if (attrs.screeningRoomID !== "") {
-            const screeningRoom = await ScreeningRoom.findById(ScreeningRoom);
+        if (attrs.screeningRoomID) {
+            const screeningRoom = await ScreeningRoom.findById(attrs.screeningRoomID);
             if (screeningRoom) {
                 spectacl.screeningRoom = screeningRoom;
             } else {
@@ -89,7 +94,7 @@ export class SpectaclService {
             endTime.setSeconds(endTime.getSeconds() + spectacl.movie.runtime.valueOf());
 
             try {
-                await this.CheckScreeningRoomAvailabilty(attrs.screeningRoomID, attrs.startTime, endTime);
+                await SpectaclService.CheckScreeningRoomAvailabilty(attrs.screeningRoomID, attrs.startTime, endTime, ID);
             } catch (err) {
                 throw err;
             }
@@ -103,31 +108,40 @@ export class SpectaclService {
         return spectacl;
     }
 
-    private async CheckScreeningRoomAvailabilty(screeningRoomID: string, startTime: Date, endTime: Date) {
+    private static async CheckScreeningRoomAvailabilty(screeningRoomID: string, startTime: Date, endTime: Date, spectaclID?: string) {
         // Checking for spectacl that has its end set between time frames set for this movie
         const spectaclBefore = await Spectacl.findOne({
+            _id: {
+                $ne: spectaclID
+            },
             screeningRoom: screeningRoomID,
             endsAt: {
                 $gte: startTime, $lte: endTime
             }
         });
         if (spectaclBefore) {
-            throw new ForbiddenError(`There is already a spectacl in Screening Room number ${screeningRoomID} starting at ${spectaclBefore.startsAt} ending ${spectaclBefore.endsAt}`);
+            throw new ConflictError(`There is already a spectacl in Screening Room number ${screeningRoomID} starting at ${spectaclBefore.startsAt} ending ${spectaclBefore.endsAt}`);
         }
 
         // Checking for spectacl that has its start set between time frames set for this movie
         const spectaclAfter = await Spectacl.findOne({
+            _id: {
+                $ne: spectaclID
+            },
             screeningRoom: screeningRoomID,
             startsAt: {
                 $gte: startTime, $lte: endTime
             }
         });
         if (spectaclAfter) {
-            throw new ForbiddenError(`There is already a spectacl in Screening Room number ${screeningRoomID} starting at ${spectaclAfter.startsAt} ending ${spectaclAfter.endsAt}`);
+            throw new ConflictError(`There is already a spectacl in Screening Room number ${screeningRoomID} starting at ${spectaclAfter.startsAt} ending ${spectaclAfter.endsAt}`);
         }
 
         // Checking for spectacl that encompasses time frames set for this movie
         const spectaclAcross = await Spectacl.findOne({
+            _id: {
+                $ne: spectaclID
+            },
             screeningRoom: screeningRoomID,
             startsAt: {
                 $lte: startTime
@@ -137,7 +151,7 @@ export class SpectaclService {
             }
         });
         if (spectaclAcross) {
-            throw new ForbiddenError(`There is already a spectacl in Screening Room number ${screeningRoomID} starting at ${spectaclAcross.startsAt} ending ${spectaclAcross.endsAt}`);
+            throw new ConflictError(`There is already a spectacl in Screening Room number ${screeningRoomID} starting at ${spectaclAcross.startsAt} ending ${spectaclAcross.endsAt}`);
         }
     }
 };

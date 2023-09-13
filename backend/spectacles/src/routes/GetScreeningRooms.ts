@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { ScreeningRoom } from "../models/ScreengingRoom";
 import { RequireAdmin } from "@spellcinema/lib";
 
-export const GetScreeningRoomRouter = (publicKey: string): express.Router => {
+export const GetScreeningRoomsRouter = (publicKey: string): express.Router => {
     const router = express.Router();
 
     router.get("/api/spectacles/screening-rooms", RequireAdmin(publicKey), async (req: Request, res: Response) => {
