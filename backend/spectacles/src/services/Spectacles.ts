@@ -52,7 +52,14 @@ export class SpectaclService {
         if (!spectacl) throw new NotFoundError(`No Spectacl with ID ${ID}`);
 
         return spectacl;
-  }
+    }
+
+    public static async GetSpectaclByID(ID: string): Promise<SpectaclDoc> {
+        const spectacl = await Spectacl.findById(ID);
+        if (!spectacl) throw new NotFoundError(`No Spectacl with ID ${ID}`);
+
+        return spectacl;
+    }
 
     public static async GetSpectacles(date: Date): Promise<SpectaclDoc[]> {
         

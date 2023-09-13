@@ -1,5 +1,4 @@
 import express from "express";
-import fs from "fs";
 import { json } from "body-parser";
 import "express-async-errors";
 
@@ -11,6 +10,7 @@ import { NewSpectaclRouter } from "./routes/NewSpectacl";
 import { GetSpectaclesRouter } from "./routes/GetSpectacles";
 import { DeleteSpectaclRouter } from "./routes/DeleteSpectacl";
 import { UpdateSpectaclRouter } from "./routes/UpdateSpectacl";
+import { GetSpectaclByIdRouter } from "./routes/GetSpectaclById";
 
 export const NewApp = (publicKey: string): express.Application => {
 
@@ -22,6 +22,8 @@ export const NewApp = (publicKey: string): express.Application => {
     app.use(DeleteSpectaclRouter(publicKey));
     app.use(GetScreeningRoomsRouter(publicKey));
     app.use(GetMovieRouter())
+    app.use(GetSpectaclByIdRouter());
+
     app.use(GetSpectaclesRouter());
     app.use(NewMovieRouter(publicKey));
     app.use(NewSpectaclRouter(publicKey));
