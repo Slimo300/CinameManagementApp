@@ -1,15 +1,15 @@
 import express, { Request, Response } from "express";
 
-import { TokenService } from "../services/token";
+import { TokenService } from "../services/Token";
 
-const logoutRouter = (tokenService: TokenService): express.Router => {
+const logoutRouter = (TokenService: TokenService): express.Router => {
 
     const router = express.Router();
 
     router.post("/api/users/logout", async (req: Request, res: Response) => {
 
         try {
-            await tokenService.InvalidateToken(req.cookies.jwt);
+            await TokenService.InvalidateToken(req.cookies.jwt);
         } catch(err) {
             console.log(err);
         }

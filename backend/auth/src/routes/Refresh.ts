@@ -1,9 +1,9 @@
 import express, {Request, Response} from "express";
 
-import { TokenService } from "../services/token";
+import { TokenService } from "../services/Token";
 import { NotAuthorizedError } from "@spellcinema/lib";
 
-const refreshRouter = (tokenService: TokenService): express.Router => {
+const refreshRouter = (TokenService: TokenService): express.Router => {
 
     const router = express.Router();
     
@@ -13,7 +13,7 @@ const refreshRouter = (tokenService: TokenService): express.Router => {
         }
     
         try {
-            const { accessToken, refreshToken } = await tokenService.RefreshTokens(req.cookies.jwt);
+            const { accessToken, refreshToken } = await TokenService.RefreshTokens(req.cookies.jwt);
     
             res.cookie("jwt", refreshToken, {
                 httpOnly: true,

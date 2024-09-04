@@ -25,6 +25,7 @@ export const ModalNewSpectacl = ({ show, toggle }) => {
 
     const [alerts, setAlerts] = useState(null);
 
+    // Effect for fetching screeningRooms data for our form 
     useEffect(() => {
         const getScreeningRooms = async() => {
             try {
@@ -39,16 +40,13 @@ export const ModalNewSpectacl = ({ show, toggle }) => {
         getScreeningRooms();
     }, []);
 
+    // Effect for seting our start Date after both date and time are set
     useEffect(() => {
         if (startDate !== "" && startTime !== "") setStart(new Date(startDate+" "+startTime));
 
     }, [startDate, startTime]);
 
-    const NumFormat = (num) => {
-        if (num < 10) return `0${num}`;
-        return `${num}`;
-    }
-
+    // Effect for calculating end time for spectacl after start time is set and movie is chosen
     useEffect(() => {
         if (start && movie) {
             const endDate = new Date(start.getTime());
@@ -58,6 +56,11 @@ export const ModalNewSpectacl = ({ show, toggle }) => {
             setEndTime(`${NumFormat(endDate.getHours())}:${NumFormat(endDate.getMinutes())}`);
         }
     }, [start, movie]);
+
+    const NumFormat = (num) => {
+        if (num < 10) return `0${num}`;
+        return `${num}`;
+    }
 
     const FindMovie = async e => {
         e.preventDefault();
@@ -79,14 +82,19 @@ export const ModalNewSpectacl = ({ show, toggle }) => {
 
     const AddSpectacl = async e => {
         e.preventDefault();
-
+        
         try {
             await axiosObject.post(BASE_URL+"/spectacles", {
                 movieID: movie.id,
                 screeningRoomID: screeningRoom,
-                startTime: start,
-                endTime: end
+                startTime: start.toISOString(),
+                endTime: end.toISOString()
             });
+            setAlerts(
+                <ul className="bg-success text-light" onClick={e => setAlerts(null)}>
+                        <li>Spectacl Created</li>
+                </ul>
+            )
         } catch (err) {
             console.log(err);
             setAlerts(
@@ -127,7 +135,7 @@ export const ModalNewSpectacl = ({ show, toggle }) => {
                                 <select className="form-select" onChange={e => { setScreeningRoom(e.target.value)}} >
                                     {
                                         screeningRoomList?screeningRoomList.map(room => {
-                                            return <option value={room.id}>{room.roomNumber} </option>
+                                            return <option key={room.id} value={room.id}>{room.roomNumber} </option>
                                         }):null
                                     }
                                 </select>

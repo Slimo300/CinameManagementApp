@@ -4,8 +4,8 @@ import { body } from "express-validator";
 import { ValidateRequest } from "@spellcinema/lib";
 
 import { User } from "../models/User";
-import { Password } from "../services/password";
-import { TokenService } from "../services/token";
+import { Password } from "../services/Password";
+import { TokenService } from "../services/Token";
 
 const loginRouter = (TokenService: TokenService): express.Router => {
     const router = express.Router();

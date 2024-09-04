@@ -11,7 +11,7 @@ import { logoutRouter } from "./routes/Logout";
 import { registerRouter } from "./routes/Register";
 import { refreshRouter } from "./routes/Refresh";
 import { ErrorHandler, NotFoundError } from "@spellcinema/lib";
-import { TokenService } from "./services/token";
+import { TokenService } from "./services/Token";
 
 
 const redisClient = createClient({

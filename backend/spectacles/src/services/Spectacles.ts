@@ -1,6 +1,6 @@
 import { startOfDay, endOfDay } from "date-fns";
 
-import { BadRequestError, ForbiddenError, NotFoundError, ConflictError } from "@spellcinema/lib";
+import { BadRequestError, NotFoundError, ConflictError } from "@spellcinema/lib";
 
 import { Movie } from "../models/Movie";
 import { ScreeningRoom } from "../models/ScreengingRoom";
