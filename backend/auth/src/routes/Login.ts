@@ -1,7 +1,7 @@
 import express, {Request, Response} from "express";
 import { body } from "express-validator";
 
-import { ValidateRequest } from "@spellcinema/lib";
+import { validateRequest } from "@spellcinema/lib";
 
 import { User } from "../models/User";
 import { Password } from "../services/Password";
@@ -13,7 +13,7 @@ const loginRouter = (TokenService: TokenService): express.Router => {
     router.post("/api/users/login", [
         body("email").isEmail().withMessage("Provide valid email"),
         body("password").notEmpty().withMessage("Password cannot be blank"),
-        ValidateRequest
+        validateRequest
     ], async (req: Request, res: Response) => {
     
         const { email, password } = req.body;

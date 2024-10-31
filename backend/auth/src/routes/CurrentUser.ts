@@ -1,11 +1,11 @@
 import express, {Request, Response } from "express";
 
-import { RequireAuth } from "@spellcinema/lib";
+import { requireAuth } from "@spellcinema/lib";
 
 
 const currentUserRouter = (publicKey: string): express.Router => {
     const router = express.Router();
-    router.get("/api/users/current-user", RequireAuth(publicKey), (req: Request, res: Response) => {
+    router.get("/api/users/current-user", requireAuth(publicKey), (req: Request, res: Response) => {
         res.send( req.currentUser );
     });
 

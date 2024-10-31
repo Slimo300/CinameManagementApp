@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { body } from "express-validator";
 
 import { User } from "../models/User";
-import { BadRequestError, ValidateRequest } from "@spellcinema/lib";
+import { BadRequestError, validateRequest } from "@spellcinema/lib";
 
 const registerRouter = (): express.Router => {
     
@@ -14,7 +14,7 @@ const registerRouter = (): express.Router => {
         body("passwordConfirmation").custom((value, {req}) => {
             return value === req.body.password;
         }).withMessage("Passwords don't match"),
-        ValidateRequest,
+        validateRequest,
     ], async (req: Request, res: Response) => {
     
         const { email, password } = req.body;

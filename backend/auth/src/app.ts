@@ -2,7 +2,7 @@ import express from "express";
 import fs from "fs";
 import { json } from "body-parser";
 import "express-async-errors";
-import cookieParser from "cookie-parser";
+// import cookieParser from "cookie-parser";
 import { RedisClientType, createClient } from "redis";
 
 import { currentUserRouter } from "./routes/CurrentUser";
@@ -10,7 +10,7 @@ import { loginRouter } from "./routes/Login";
 import { logoutRouter } from "./routes/Logout";
 import { registerRouter } from "./routes/Register";
 import { refreshRouter } from "./routes/Refresh";
-import { ErrorHandler, NotFoundError } from "@spellcinema/lib";
+import { errorHandler, NotFoundError } from "@spellcinema/lib";
 import { TokenService } from "./services/Token";
 
 
@@ -20,8 +20,8 @@ const redisClient = createClient({
 
 redisClient.on("error", err => console.log("Redis Client Error", err));
 
-const privateKey = fs.readFileSync("/private/private.key", "utf-8");
-const publicKey = fs.readFileSync("/public/public.key", "utf-8");
+const privateKey = fs.readFileSync("/app/private.key", "utf-8");
+const publicKey = fs.readFileSync("/app/public.key", "utf-8");
 
 const tokenService = new TokenService(redisClient as RedisClientType, privateKey);
 
@@ -29,7 +29,7 @@ const app = express();
 
 app.set("trust proxy", true);
 app.use(json());
-app.use(cookieParser());
+// app.use(cookieParser());
 
 app.use(currentUserRouter(publicKey));
 app.use(loginRouter(tokenService));
@@ -41,7 +41,7 @@ app.all("*", () => {
     throw new NotFoundError();
 })
 
-app.use(ErrorHandler);
+app.use(errorHandler);
 
 export { redisClient }
 export { app };
