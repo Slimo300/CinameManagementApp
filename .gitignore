@@ -1,7 +1,6 @@
 **/node_modules
+**/.vscode
+**/.next
 
 infra/k8s/secrets
-
 rsa/
-
-**/.vscode
