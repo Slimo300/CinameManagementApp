@@ -20,8 +20,8 @@ const redisClient = createClient({
 
 redisClient.on("error", err => console.log("Redis Client Error", err));
 
-const privateKey = fs.readFileSync("/app/private.key", "utf-8");
-const publicKey = fs.readFileSync("/app/public.key", "utf-8");
+const privateKey = fs.readFileSync("/app/private-key/private_key.pem", "utf-8");
+const publicKey = fs.readFileSync("/app/public-key/public_key.pem", "utf-8");
 
 const tokenService = new TokenService(redisClient as RedisClientType, privateKey);
 

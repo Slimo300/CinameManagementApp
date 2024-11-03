@@ -1,0 +1,34 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: private-key
+data:
+  private_key.pem: |
+    -----BEGIN PRIVATE KEY-----
+    MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC8zbZC5mR71jru
+    lN1lOs0FghqEPcQ+uPZOHGYn0FhjENoyEM88xtYBjN8IwIrnFv8kz96Z4f4yL5NB
+    cnI2Vy+mF0vtig5jpzgGwTg7KCuJ8+TE2xK/XFr1DHQARSarAo48o9LOoKdmOq3x
+    XS++1Hie8cnGjSLRnFhrXlVJSvbWK7X08bHiaDe+rJQYHUkWg+Q6cspN/7nq6+93
+    alPZL5RlGPTKB8iWV03SOO/ECI8yn37stzlEiacSwvZONWk/Ot+3NeogETVVorpi
+    uZ+/Y1TTnErSRgdZLmBPSlP4UU4HEEf3ogSuWoucWQqatzpeJAjhquQqgmLF1BHy
+    BKFKXbWZAgMBAAECggEAGPaVXydpk3VstFKK1VF0KILJG8FeRbFx9jugsX9FeHpo
+    HHoxfxvb0Yz9M6yK5mlu0cC0R3dkgzaGy1P6UD9bME7gk1Hk0NNGv/SN3psolTm3
+    U+SSstTfZ+ATebJVna3IUwc8HmWKd09R5ARfWuVqj2VxDtIRZP09iZte6RfC0ZKa
+    z8hY6LWhqYv4lj/R/Edoqrupv1KxN+hLEmIEiI2zfxg+0A+Lwon9LJtxzxHG8gLx
+    IWA01w8Erl7cqNtbdsiYcuCtpUYetk5Khjx6RswbDYV9XsobCjvxYd3ff+MRbkC9
+    TlfIBnMbAE+wMywgtwffckIr5N3oEy5HdpUhoFb2KwKBgQDgxufkSVZ0fO0FbhFZ
+    OrGz5+JRNc7UzlelO7AGeFP5Al9H4iTOE730nI+4QZgyRGFr1m2h1y823UoaRbsP
+    gPfSFLFfBTqw9alFr7XSpa4gs7j2EjHedW72dtcq0A+9Dl7NyER6l8zjqSxRnBC0
+    E1mqHEHVF/0Hkpn3JmRUOjZkUwKBgQDXB5ZqPwJwNaGnvX+3WUaqeJ3XkgGAPLFa
+    A6Q8VaOdkWvvKbqJ6EBIdyVP6sJ5WRNL03HtSGYAoYlLcL3bpaZ+t/UsMpA+QWML
+    cIvyizAsXtvf32LD9C3q8ltgkYIOMnr7f+7c/EfDKDWsi9WgEvcf3TMHbeUuvASd
+    397ePvpA4wKBgGY902jhevPNhzp7EGUX75C3nxf1c7kUioVcGvs2bGvNim12Deu2
+    yyaiuDTFkWb795xHkuKUsKMyEOzWXvn0XcUvKGbiSAoKFA7gl8HTHts9JJq5N/nK
+    TMjK0aBlt2L1UGYl/BAPUGEVqFUOugJO8vAPnlpBaRSyuFnVGrm9KNSFAoGAOgWe
+    HMUrz0Npf22uzLaWTuGFFeob5ZJ6+KMK6gzhvV7EFSDZaOT2k5cyxkG+gCf9APTp
+    RPHINFtiRK0DTgWAy6ivy2FJcsMKCsgvux67vP1LrzkD2YRF76O97GzW/yW38a0v
+    swmQA6UR9qE036C+dial4ldRBC9Pv5ns9WNg+6kCgYEAsewrhJ0Rd0/427bQ7E3W
+    5dt2EpZEZWnzQwtzGLC06ixyYSBdFZpHU/lpJXENRovFQd2yiY5NQoe/3MybPsGg
+    SGhH80++uqgYX51lTdoB+X0NCf2Ie7U+/AM4qPaWwQydPAy90+wOZHhHGdKNBoUQ
+    vtwNBQiyAzpY25UXYZb4Xt0=
+    -----END PRIVATE KEY-----

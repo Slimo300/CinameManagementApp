@@ -24,7 +24,7 @@ spec:
               value: "mongodb://spectacles-mongo-srv:27017/spectacles"
           volumeMounts:
             - name: public-key
-              mountPath: /rsa
+              mountPath: /app/public-key
       volumes:
         - name: public-key
           configMap:

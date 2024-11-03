@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: public-key
+data:
+  public_key.pem: |
+    -----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvM22QuZke9Y67pTdZTrN
+    BYIahD3EPrj2ThxmJ9BYYxDaMhDPPMbWAYzfCMCK5xb/JM/emeH+Mi+TQXJyNlcv
+    phdL7YoOY6c4BsE4OygrifPkxNsSv1xa9Qx0AEUmqwKOPKPSzqCnZjqt8V0vvtR4
+    nvHJxo0i0ZxYa15VSUr21iu19PGx4mg3vqyUGB1JFoPkOnLKTf+56uvvd2pT2S+U
+    ZRj0ygfIlldN0jjvxAiPMp9+7Lc5RImnEsL2TjVpPzrftzXqIBE1VaK6Yrmfv2NU
+    05xK0kYHWS5gT0pT+FFOBxBH96IErlqLnFkKmrc6XiQI4arkKoJixdQR8gShSl21
+    mQIDAQAB
+    -----END PUBLIC KEY-----

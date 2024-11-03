@@ -38,9 +38,9 @@ spec:
               name: refresh-secret
           volumeMounts:
             - name: private-key
-              mountPath: /private
+              mountPath: /app/private-key
             - name: public-key
-              mountPath: /public
+              mountPath: /app/public-key
       volumes:
         - name: private-key
           configMap:
