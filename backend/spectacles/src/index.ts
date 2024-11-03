@@ -11,7 +11,7 @@ const start = async () => {
     }
 
     try {
-        const publicKey = fs.readFileSync("/rsa/public.key", "utf-8");
+        const publicKey = fs.readFileSync("/app/public-key/public_key.pem", "utf-8");
 
         await mongoose.connect(process.env.MONGO_URI, {
             autoIndex: true,

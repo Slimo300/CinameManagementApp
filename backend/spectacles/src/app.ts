@@ -2,7 +2,7 @@ import express from "express";
 import { json } from "body-parser";
 import "express-async-errors";
 
-import { NotFoundError, ErrorHandler } from "@spellcinema/lib";
+import { NotFoundError, errorHandler } from "@spellcinema/lib";
 import { NewMovieRouter } from "./routes/NewMovie";
 import { GetMovieRouter } from "./routes/GetMovie";
 import { GetScreeningRoomsRouter } from "./routes/GetScreeningRooms";
@@ -30,10 +30,10 @@ export const NewApp = (publicKey: string): express.Application => {
     app.use(UpdateSpectaclRouter(publicKey));
     
     app.all("*", () => {
-        throw new NotFoundError("Route not found");
+        throw new NotFoundError();
     })
     
-    app.use(ErrorHandler);
+    app.use(errorHandler);
     
     
     return app;

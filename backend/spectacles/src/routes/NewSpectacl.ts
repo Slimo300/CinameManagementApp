@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { body } from "express-validator";
 
-import { BadRequestError, RequireAdmin, ValidateRequest } from "@spellcinema/lib";
+import { BadRequestError, requireAuth, requireAdmin, validateRequest } from "@spellcinema/lib";
 
 import { SpectaclService } from "../services/Spectacles";
 
@@ -9,12 +9,12 @@ export const NewSpectaclRouter = (publicKey: string): express.Router => {
     const router = express.Router();
 
     router.post("/api/spectacles",
-        RequireAdmin(publicKey),
+        requireAuth(publicKey), requireAdmin,
     
         body("movieID").not().isEmpty().withMessage("movieID must be set"),
         body("screeningRoomID").not().isEmpty().withMessage("screeningRoomID must be set"),
         body("startTime").isISO8601().toDate().withMessage("startTime must be a valid Date"),
-        ValidateRequest,
+        validateRequest,
             
         async (req: Request, res: Response) => {
 

@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 
-import { RequireAdmin } from "@spellcinema/lib";
+import { requireAuth, requireAdmin } from "@spellcinema/lib";
 
 import { SpectaclService } from "../services/Spectacles";
 
@@ -8,7 +8,7 @@ export const DeleteSpectaclRouter = (publicKey: string): express.Router => {
     const router = express.Router();
 
     router.delete("/api/spectacles/:id",
-        RequireAdmin(publicKey),
+        requireAuth(publicKey), requireAdmin),
         async (req: Request, res: Response) => {
             const { id } = req.params;
 
@@ -19,7 +19,7 @@ export const DeleteSpectaclRouter = (publicKey: string): express.Router => {
             } catch ( err ) {
                 throw err;
             }
-        });
+        };
 
     return router;
 }

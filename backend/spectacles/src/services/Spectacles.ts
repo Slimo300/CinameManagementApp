@@ -49,14 +49,14 @@ export class SpectaclService {
 
     public static async DeleteSpectacl(ID: string): Promise<SpectaclDoc> {
         const spectacl = await Spectacl.findByIdAndDelete(ID);
-        if (!spectacl) throw new NotFoundError(`No Spectacl with ID ${ID}`);
+        if (!spectacl) throw new NotFoundError();
 
         return spectacl;
     }
 
     public static async GetSpectaclByID(ID: string): Promise<SpectaclDoc> {
         const spectacl = await Spectacl.findById(ID);
-        if (!spectacl) throw new NotFoundError(`No Spectacl with ID ${ID}`);
+        if (!spectacl) throw new NotFoundError();
 
         return spectacl;
     }
@@ -73,7 +73,7 @@ export class SpectaclService {
     public static async UpdateSpectacl(ID: string, attrs: SpectaclAttrs): Promise<SpectaclDoc> {
         const spectacl = await Spectacl.findById(ID).populate("movie");
         if (!spectacl) {
-            throw new NotFoundError(`Spectacl with id ${ID} not found`);
+            throw new NotFoundError();
         } 
 
         if (attrs.movieID) {
