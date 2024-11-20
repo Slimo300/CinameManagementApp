@@ -35,3 +35,17 @@ spec:
       protocol: TCP
       port: 27017
       targetPort: 27017
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-init
+data:
+  auth-init.js: |-
+    db = db.getSiblingDB("auth");
+    db.users.insertOne({
+        email: "admin@net.pl",
+        password: "0d367b99fcb0ba196198438c0e5960c59db140efd1e8f1b2bdacceedc0a87a0c1479d16afdc3094def2dad093397dfd1b131c37234140465d152a08a088f58cb.071578beb61498ed",
+        isAdmin: true,
+        __v: 0
+    })

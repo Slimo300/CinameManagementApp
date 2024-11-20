@@ -2,12 +2,15 @@ minikube delete
 minikube start
 minikube addons enable ingress
 
-# Creating ConfigMap for every file in init-scripts directory. 
-# It will store init scripts for our mongo instances
-for FILE in init-scripts/*
-do 
-    filename=$(basename "$FILE")
-    kubectl create cm "${filename%.*}" --from-file=$FILE
-done
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.15.3 \
+  --set crds.enabled=true
+
+kubectl apply -f ./infra/k8s/secrets/ca-secret.yaml
+kubectl apply -f ./infra/k8s/cert-manager/cluster-issuer-ca.yaml
+kubectl apply -f ./infra/k8s/cert-manager/certificate-ca.yaml
 
 skaffold dev

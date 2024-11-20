@@ -31,3 +31,7 @@ spec:
                 name: client-srv
                 port:
                   number: 3000
+  tls:
+  - hosts:
+      - www.spellcinema.com
+    secretName: spellcinema-tls
