@@ -19,7 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@spellcinema/lib": "^1.1.4",
+    "@spellcinema/lib": "^1.1.5",
     "@types/cookie-parser": "^1.4.7",
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
