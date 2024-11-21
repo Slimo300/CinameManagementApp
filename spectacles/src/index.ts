@@ -6,9 +6,9 @@ import { NewApp } from "./app";
 
 const start = async () => {
 
-    if (!process.env.MONGO_URI) {
-        throw new Error("MONGO_URI not defined");
-    }
+    if (!process.env.MONGO_URI) throw new Error("MONGO_URI not defined");
+    if (!process.env.MOVIES_API_KEY) throw new Error("MOVIES_API_KEY not defined");
+    if (!process.env.MOVIES_API_HOST) throw new Error("MOVIES_API_HOST not defined");
 
     try {
         const publicKey = fs.readFileSync("/app/public-key/public_key.pem", "utf-8");

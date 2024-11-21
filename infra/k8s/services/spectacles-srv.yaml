@@ -22,6 +22,9 @@ spec:
           env: 
             - name: MONGO_URI
               value: "mongodb://spectacles-mongo-srv:27017/spectacles"
+          envFrom:
+          - secretRef:
+              name: movies-api-keys
           volumeMounts:
             - name: public-key
               mountPath: /app/public-key
