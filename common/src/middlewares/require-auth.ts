@@ -17,11 +17,11 @@ declare global {
 }
 
 export const requireAuth = (publicKey: string) => (req: Request, res: Response, next: NextFunction) => {
-  if (!req.cookies.refreshToken) {
+  if (!req.cookies.accessToken) {
     throw new NotAuthorizedError();
   }
   try {
-      const payload = jwt.verify(req.cookies.refreshToken, publicKey, {
+      const payload = jwt.verify(req.cookies.accessToken, publicKey, {
           algorithms: ["RS256"]
       }) as UserPayload;
       req.currentUser = {

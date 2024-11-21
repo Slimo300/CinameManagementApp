@@ -3,8 +3,8 @@ import { AppError } from './app-error';
 export class NotAuthorizedError extends AppError {
   statusCode = 401;
 
-  constructor(message: string) {
-    super(message);
+  constructor() {
+    super("user not authorized");
 
     Object.setPrototypeOf(this, NotAuthorizedError.prototype);
   }
