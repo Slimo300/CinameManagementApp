@@ -18,7 +18,7 @@ declare global {
 
 export const requireAuth = (publicKey: string) => (req: Request, res: Response, next: NextFunction) => {
   if (!req.cookies.accessToken) {
-    throw new NotAuthorizedError();
+    throw new NotAuthorizedError("no token found");
   }
   try {
       const payload = jwt.verify(req.cookies.accessToken, publicKey, {
@@ -30,8 +30,8 @@ export const requireAuth = (publicKey: string) => (req: Request, res: Response, 
           isAdmin: payload.isAdmin,
       };
   }
-  catch (err) {
-      throw new NotAuthorizedError();
+  catch (err: any) {
+      throw new NotAuthorizedError(err.message?err.message:"user not authorized");
   }
   next();
 };
