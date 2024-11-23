@@ -8,7 +8,7 @@ const refreshRouter = (TokenService: TokenService): express.Router => {
     
     router.post("/api/users/refresh", async (req: Request, res: Response) => {
         if (!req.cookies?.refreshToken) {
-            throw new NotAuthorizedError();
+            throw new NotAuthorizedError("refresh token not provided");
         }
         try {
             const { accessToken, refreshToken } = await TokenService.RefreshTokens(req.cookies.refreshToken);
@@ -23,7 +23,7 @@ const refreshRouter = (TokenService: TokenService): express.Router => {
                 domain: process.env.DOMAIN,
             })
             res.send({ message: "success" });
-        } catch (err) {
+        } catch (err: any) {
             res.clearCookie("refreshToken", {
                 httpOnly: true,
                 domain: process.env.DOMAIN
@@ -32,7 +32,7 @@ const refreshRouter = (TokenService: TokenService): express.Router => {
                 httpOnly: true,
                 domain: process.env.DOMAIN
             })
-            throw new NotAuthorizedError();
+            throw new NotAuthorizedError(err.message?err.message:"refresh validation failed");
         }
     });
     return router;
