@@ -4,7 +4,6 @@ import Image from "next/image";
 import logo from "../statics/images/logo.png";
 
 export default ({ user }) => {
-    console.log(user);
     return (
         <nav className="bg-violet navbar navbar-expand-lg bg-body-tertiary">
             <div className="container-fluid">

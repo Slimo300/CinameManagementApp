@@ -7,6 +7,11 @@ interface SpectaclAttrs {
     screeningRoom: ScreeningRoomDoc;
     startsAt: Date;
     endsAt: Date;
+    seatsStatus: {
+        [row: string]: {
+            [seat: string]: boolean;
+        }
+    }
 }
 
 export interface SpectaclDoc extends mongoose.Document {
@@ -14,6 +19,11 @@ export interface SpectaclDoc extends mongoose.Document {
     screeningRoom: ScreeningRoomDoc;
     startsAt: Date;
     endsAt: Date;
+    seatsStatus: {
+        [row: string]: {
+            [seat: string]: boolean;
+        };
+    };
 }
 
 interface SpectaclModel extends mongoose.Model<SpectaclDoc> {
@@ -38,7 +48,18 @@ const spectaclSchema = new mongoose.Schema({
     endsAt: {
         type: Date,
         required: true,
-    }
+    },
+    seatsStatus: {
+        type: Map,
+        of: new mongoose.Schema(
+            {
+                type: Map,
+                of: Boolean,
+            },
+            { _id: false } // Disable _id for inner schemas
+        ),
+        required: true,
+    },
 }, {
     toJSON: {
         transform(doc, ret) {

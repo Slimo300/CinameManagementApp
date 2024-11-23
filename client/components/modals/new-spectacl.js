@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Modal, ModalHeader, ModalBody } from 'reactstrap';
+import useRequest from "../../hooks/use-request";
 
-export const ModalNewSpectacl = ({ show, toggle }) => {
-    // movieTitle to find a movie by it
+export const ModalNewSpectacl = ({ show, toggle, screeningRooms }) => {
     const [movieTitle, setMovieTitle] = useState("");
-    // object for display of a chosen movie
     const [movie, setMovie] = useState(null);
 
-    // screening room chosen for given spectacl
     const [screeningRoom, setScreeningRoom] = useState(null);
-    // list of all available screening rooms
-    const [screeningRoomList, setScreeningRoomList] = useState(null);
     
     const [start, setStart] = useState(null);
     const [end, setEnd] = useState(null);
-
+    
     const [startDate, setStartDate] = useState("");
     const [startTime, setStartTime] = useState("");
     const [endDate, setEndDate] = useState("");
@@ -22,20 +18,16 @@ export const ModalNewSpectacl = ({ show, toggle }) => {
 
     const [alerts, setAlerts] = useState(null);
 
-    // Effect for fetching screeningRooms data for our form 
-    useEffect(() => {
-        const getScreeningRooms = async() => {
-            try {
-                const response = await axiosObject.get(BASE_URL+"/spectacles/screening-rooms")
-                setScreeningRoomList(response.data);
-                setScreeningRoom(response.data[0].id);
-            } catch(err) {
-                alert(err);
-            }
-        };
-
-        getScreeningRooms();
-    }, []);
+    const findMovieRequest = useRequest({
+        url: `/api/spectacles/movie?title=${movieTitle}`,
+        method: "get",
+        body: {},
+        onSuccess: () => setAlerts(
+            <ul className="bg-success text-light" onClick={e => setAlerts(null)}>
+                <li>Spectacl created!</li>
+            </ul>
+        )
+    })
 
     // Effect for seting our start Date after both date and time are set
     useEffect(() => {
@@ -69,7 +61,6 @@ export const ModalNewSpectacl = ({ show, toggle }) => {
             setAlerts(
                 <ul className="bg-danger text-light" onClick={e => setAlerts(null)}>
                     {err.response.data.map(err => {
-                        console.log(err);
                         return <li key={err.message}>{err.message}</li>
                     })}
                 </ul>
@@ -93,11 +84,9 @@ export const ModalNewSpectacl = ({ show, toggle }) => {
                 </ul>
             )
         } catch (err) {
-            console.log(err);
             setAlerts(
                 <ul className="bg-danger text-light" onClick={e => setAlerts(null)}>
                     {err.response.data.map(err => {
-                        console.log(err);
                         return <li key={err.message}>{err.message}</li>
                     })}
                 </ul>
@@ -131,7 +120,7 @@ export const ModalNewSpectacl = ({ show, toggle }) => {
                                 <label className="input-group-text">Select Screening Room</label>
                                 <select className="form-select" onChange={e => { setScreeningRoom(e.target.value)}} >
                                     {
-                                        screeningRoomList?screeningRoomList.map(room => {
+                                        screeningRooms?screeningRooms.map(room => {
                                             return <option key={room.id} value={room.id}>{room.roomNumber} </option>
                                         }):null
                                     }

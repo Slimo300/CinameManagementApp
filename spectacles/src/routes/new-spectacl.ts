@@ -15,24 +15,15 @@ export const NewSpectaclRouter = (publicKey: string): express.Router => {
         body("screeningRoomID").not().isEmpty().withMessage("screeningRoomID must be set"),
         body("startTime").isISO8601().toDate().withMessage("startTime must be a valid Date"),
         validateRequest,
-            
         async (req: Request, res: Response) => {
-
             const { movieID, screeningRoomID, startTime } = req.body;
-
             if (!(startTime instanceof Date)) {
-                throw new BadRequestError("startTime must be valid dates");
+                throw new BadRequestError("startTime must be valid date");
             }
-
-            let spectacl;
-            try {
-                spectacl = await SpectaclService.NewSpectacl({
-                    movieID, screeningRoomID, startTime
-                })
-            } catch (err) {
-                throw err;
-            }
-
+            console.log("Invoking SpectalService...");
+            const spectacl = await SpectaclService.NewSpectacl({
+                movieID, screeningRoomID, startTime
+            });
             res.status(201).send(spectacl);
         });
 

@@ -1,5 +1,6 @@
 import express from "express";
 import { json } from "body-parser";
+import cookieParser from "cookie-parser";
 import "express-async-errors";
 
 import { NotFoundError, errorHandler } from "@spellcinema/lib";
@@ -19,7 +20,8 @@ export const NewApp = (publicKey: string): express.Application => {
 
     app.set("trust proxy", true);
     app.use(json());
-    
+    app.use(cookieParser());
+
     app.use(DeleteSpectaclRouter(publicKey));
     app.use(GetScreeningRoomsRouter(publicKey));
     app.use(GetMovieRouter())

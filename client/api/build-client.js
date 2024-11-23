@@ -23,12 +23,9 @@ export default ({ req }) => {
         const originalRequest = err.config;
         if (err.status === 401) {
             try {
-                console.log("Sending refresh request...");
                 await getClient(err.config).post("/api/users/refresh", {}, { withCredentials: true });
-                console.log("Refresh request sent...");
-                return client(originalRequest);
+                return getClient(originalRequest);
             } catch (err) {
-                console.log(err.response.data);
                 return Promise.reject(err);
             }
         }

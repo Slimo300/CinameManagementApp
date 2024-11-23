@@ -15,33 +15,43 @@ interface SpectaclAttrs {
 export class SpectaclService {
     
     public static async NewSpectacl(attrs: SpectaclAttrs): Promise<SpectaclDoc> {
-
         const movie = await Movie.findById(attrs.movieID);
         if (!movie) {
             throw new BadRequestError(`No movie with ID ${attrs.movieID}`);
         }
+        console.log("Movie found...")
 
         const screeningRoom = await ScreeningRoom.findById(attrs.screeningRoomID);
         if (!screeningRoom) {
             throw new BadRequestError(`No screening room witg ID ${attrs.screeningRoomID}`);
         }
-
+        console.log("ScreeningRoom found...")
         const endTime = new Date(attrs.startTime.getTime());
         endTime.setSeconds(endTime.getSeconds() + movie.runtime.valueOf());
 
-        try {
-            await SpectaclService.CheckScreeningRoomAvailabilty(attrs.screeningRoomID, attrs.startTime, endTime);
-        } catch (err) {
-            throw err;
+        await SpectaclService.CheckScreeningRoomAvailabilty(attrs.screeningRoomID, attrs.startTime, endTime);
+        console.log("ScreeningRoom availability checked...")
+
+        const seatsStatus: Record<string, Record<string, boolean>> = {};
+
+        for (const [row, data] of Object.entries(screeningRoom.rows)) {
+            seatsStatus[row] = {};
+            data.seats.forEach((seat: string) => {
+                seatsStatus[row][seat] = false;
+            });
         }
 
+        console.log("status of seats established...")
+    
         // Creating a spectacl
         const spectacl = Spectacl.build({
             movie: movie,
             screeningRoom: screeningRoom,
             startsAt: attrs.startTime,
             endsAt: endTime,
+            seatsStatus: seatsStatus
         })
+        console.log("spectacl built: ", spectacl);
         await spectacl.save();
 
         return spectacl;
